@@ -80,7 +80,7 @@ void SignalGenerator::Init() {
 /* static */
 void SignalGenerator::Render() {
   Gpio<PortD, 7>::set_mode(DIGITAL_OUTPUT);
-  
+
   // Render some audio samples.
   while (audio_buffer_.writable() >= kAudioBlockSize) {
     Gpio<PortD, 7>::High();
@@ -105,7 +105,7 @@ void SignalGenerator::Render() {
     (*render_fn)();
     Gpio<PortD, 7>::Low();
   }
-  
+
   // Render some CV samples.
   while (cv_buffer_.writable() >= kCvBlockSize) {
     UpdateIncrements();
@@ -148,7 +148,7 @@ void SignalGenerator::UpdateIncrements() {
     state_.clock_prescaler = pgm_read_word(
         lut_clock_prescaler + data_.clock.resolution);
   }
-  
+
   // Gate.
   state_.gate_phase_increment = pgm_read_dword(
       lut_gate_phase_increment + data_.gate.period);
@@ -159,7 +159,7 @@ void SignalGenerator::UpdateIncrements() {
   if (data_.gate.midi_mode && !state_.gate_pulse_duration) {
     state_.gate_pulse_duration = pgm_read_word(lut_pulse_duration);
   }
-  
+
   // CV.
   state_.cv_phase_increment = pgm_read_dword(
       lut_cv_phase_increment + data_.cv.period);
@@ -192,7 +192,7 @@ void SignalGenerator::RenderClock() {
 void SignalGenerator::RenderGate() {
   LongWord gate_phase;
   gate_phase.value = state_.gate_phase;
-  
+
   for (uint8_t i = 0; i < kCvBlockSize; ++i) {
     if (!data_.gate.midi_mode) {
       gate_phase.value += state_.gate_phase_increment;
@@ -225,7 +225,7 @@ const prog_uint16_t chromatic_scale[] PROGMEM = {
 void SignalGenerator::RenderCv() {
   uint16_t scale = pgm_read_word(cv_range_scale + data_.cv.range);
   uint16_t offset = pgm_read_word(cv_range_offset + data_.cv.range);
-  
+
   if (data_.cv.midi_mode) {
     uint16_t value = 0;
     switch (data_.cv.midi_mode) {
@@ -303,6 +303,12 @@ void SignalGenerator::RenderCv() {
             value = pgm_read_word(chromatic_scale + index);
           }
           break;
+        case CV_MODE_CM3_NOTE:
+          value = 3048;
+          break;
+        case CV_MODE_CM1_NOTE:
+          value = 2381;
+          break;
         case CV_MODE_C1_NOTE:
           value = 1715;
           break;
@@ -315,7 +321,7 @@ void SignalGenerator::RenderCv() {
       }
       cv_samples_[i] = value;
     }
-    state_.cv_phase = cv_phase.value;    
+    state_.cv_phase = cv_phase.value;
   }
 }
 
@@ -331,18 +337,18 @@ void SignalGenerator::RenderAudioBandLimited() {
   uint8_t wave_index = balance_index & 0xf;
   uint8_t base_resource_id = data_.audio.mode == AUDIO_MODE_SAW ?
       WAV_BANDLIMITED_SAW_0 :
-      (data_.audio.mode == AUDIO_MODE_SQUARE ? WAV_BANDLIMITED_SQUARE_0  : 
+      (data_.audio.mode == AUDIO_MODE_SQUARE ? WAV_BANDLIMITED_SQUARE_0  :
       WAV_BANDLIMITED_TRIANGLE_0);
 
   const prog_uint8_t* wave_1 = waveform_table[base_resource_id + wave_index];
   wave_index = U8AddClip(wave_index, 1, 6);
   const prog_uint8_t* wave_2 = waveform_table[base_resource_id + wave_index];
-  
+
   uint32_t phase = state_.audio_phase;
   uint32_t increment = state_.audio_phase_increment;
   uint16_t envelope_phase = state_.audio_envelope_phase;
   uint8_t count = kAudioBlockSize;
-  
+
   if (state_.trigger_count) {
     state_.trigger_count = 0;
     envelope_phase = 0;
@@ -356,20 +362,20 @@ void SignalGenerator::RenderAudioBandLimited() {
       data_.audio.midi_mode == AUDIO_MIDI_MODE_GATE) {
     amplitude = note_stack_.size() ? 4095 : 0;
   }
-  
+
   while (count--) {
     phase += increment;
     LongWord phi;
     phi.value = phase;
-    
+
     envelope_phase += 4;
     if (envelope_phase < 4) {
       envelope_phase = 0xffff;
     }
-    
+
     uint16_t sample = U8U8Mul(InterpolateSample(wave_1, phi.words[1]), gain_1);
     sample += U8U8Mul(InterpolateSample(wave_2, phi.words[1]), gain_2);
-    
+
     if (data_.audio.envelope_mode == AUDIO_ENVELOPE_MODE_TRIGGER) {
       Word envelope_phi;
       envelope_phi.value = envelope_phase;
@@ -389,12 +395,12 @@ void SignalGenerator::RenderAudioNoise() {
   uint32_t phase = state_.audio_phase;
   uint8_t count = kAudioBlockSize;
   uint16_t envelope_phase = state_.audio_envelope_phase;
-  
+
   if (state_.trigger_count) {
     state_.trigger_count = 0;
     envelope_phase = 0;
   }
-  
+
   uint16_t amplitude = 512;
   if (data_.audio.envelope_mode == AUDIO_ENVELOPE_MODE_GATE
       && !state_.gate_state) {
@@ -404,7 +410,7 @@ void SignalGenerator::RenderAudioNoise() {
       data_.audio.midi_mode == AUDIO_MIDI_MODE_GATE) {
     amplitude = note_stack_.size() ? 512 : 0;
   }
-  
+
   while (count--) {
     phase = phase * 1664525L + 1013904223L;
     envelope_phase += 4;
@@ -430,12 +436,12 @@ void SignalGenerator::RenderAudioSine() {
   uint32_t increment = state_.audio_phase_increment;
   uint8_t count = kAudioBlockSize;
   uint16_t envelope_phase = state_.audio_envelope_phase;
-  
+
   if (state_.trigger_count) {
     state_.trigger_count = 0;
     envelope_phase = 0;
   }
-  
+
   uint16_t amplitude = 4095;
   if (data_.audio.envelope_mode == AUDIO_ENVELOPE_MODE_GATE
       && !state_.gate_state) {
@@ -445,21 +451,21 @@ void SignalGenerator::RenderAudioSine() {
       data_.audio.midi_mode == AUDIO_MIDI_MODE_GATE) {
     amplitude = note_stack_.size() ? 4095 : 0;
   }
-  
+
   while (count--) {
     phase += increment;
     LongWord phi;
     phi.value = phase;
-    
+
     envelope_phase += 4;
     if (envelope_phase < 4) {
       envelope_phase = 0xffff;
     }
-    
+
     uint16_t a = pgm_read_word(lut_sine + phi.bytes[3]);
     uint16_t b = pgm_read_word(lut_sine + phi.bytes[3] + 1);
     uint16_t sample = a + S16U8MulShift8(b - a, phi.bytes[2]);
-    
+
     if (data_.audio.envelope_mode == AUDIO_ENVELOPE_MODE_TRIGGER) {
       Word envelope_phi;
       envelope_phi.value = envelope_phase;

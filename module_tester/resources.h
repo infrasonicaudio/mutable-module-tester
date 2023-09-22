@@ -120,40 +120,42 @@ extern const prog_uint8_t wav_bandlimited_triangle_5[] PROGMEM;
 #define STR_1OCT_ARP 41  // 1oct arp
 #define STR_2OCT_ARP 42  // 2oct arp
 #define STR_CHRM_SCL 43  // chrm.scl
-#define STR_C1_NOTE 44  // c1 note
-#define STR_C3_NOTE 45  // c3 note
-#define STR__OFF 46  // off
-#define STR__GATE 47  // gate
-#define STR_TRIGGER 48  // trigger
-#define STR___OFF 49  // off
-#define STR__NOTE 50  // note
-#define STR_VELOCITY 51  // velocity
-#define STR_PTCHBEND 52  // ptchbend
-#define STR_MODWHEEL 53  // modwheel
-#define STR_SAW 54  // saw
-#define STR__SQUARE 55  // square
-#define STR__TRIANGLE 56  // triangle
-#define STR__SINE 57  // sine
-#define STR_NOISE 58  // noise
-#define STR_10HZ 59  // 10Hz
-#define STR_20HZ 60  // 20Hz
-#define STR_50HZ 61  // 50Hz
-#define STR_100HZ 62  // 100Hz
-#define STR_200HZ 63  // 200Hz
-#define STR_500HZ 64  // 500Hz
-#define STR_1_0KHZ 65  // 1.0kHz
-#define STR_2_0KHZ 66  // 2.0kHz
-#define STR_5_0KHZ 67  // 5.0kHz
-#define STR_11V 68  // 1V
-#define STR_12V 69  // 2V
-#define STR_15V 70  // 5V
-#define STR_S1V 71  // +1V
-#define STR_S2V 72  // +2V
-#define STR_S5V 73  // +5V
-#define STR____OFF 74  // off
-#define STR___NOTE 75  // note
-#define STR___GATE 76  // gate
-#define STR__ON 77  // on
+#define STR_CM3_NOTE 44  // c-3 note
+#define STR_CM1_NOTE 45  // c-1 note
+#define STR_C2_NOTE 46  // c1 note
+#define STR_C4_NOTE 47  // c3 note
+#define STR__OFF 48  // off
+#define STR__GATE 49  // gate
+#define STR_TRIGGER 50  // trigger
+#define STR___OFF 51  // off
+#define STR__NOTE 52  // note
+#define STR_VELOCITY 53  // velocity
+#define STR_PTCHBEND 54  // ptchbend
+#define STR_MODWHEEL 55  // modwheel
+#define STR_SAW 56  // saw
+#define STR__SQUARE 57  // square
+#define STR__TRIANGLE 58  // triangle
+#define STR__SINE 59  // sine
+#define STR_NOISE 60  // noise
+#define STR_10HZ 61  // 10Hz
+#define STR_20HZ 62  // 20Hz
+#define STR_50HZ 63  // 50Hz
+#define STR_100HZ 64  // 100Hz
+#define STR_200HZ 65  // 200Hz
+#define STR_500HZ 66  // 500Hz
+#define STR_1_0KHZ 67  // 1.0kHz
+#define STR_2_0KHZ 68  // 2.0kHz
+#define STR_5_0KHZ 69  // 5.0kHz
+#define STR_11V 70  // 1V
+#define STR_12V 71  // 2V
+#define STR_15V 72  // 5V
+#define STR_S1V 73  // +1V
+#define STR_S2V 74  // +2V
+#define STR_S5V 75  // +5V
+#define STR____OFF 76  // off
+#define STR___NOTE 77  // note
+#define STR___GATE 78  // gate
+#define STR__ON 79  // on
 #define LUT_AUDIO_MIDI_NOTE 0
 #define LUT_AUDIO_MIDI_NOTE_SIZE 137
 #define LUT_ENVELOPE 1
@@ -224,7 +226,7 @@ typedef avrlib::ResourcesManager<
     ResourceId,
     avrlib::ResourcesTables<
         string_table,
-        lookup_table_table> > ResourcesManager; 
+        lookup_table_table> > ResourcesManager;
 
 }  // namespace module_tester
 

@@ -68,6 +68,8 @@ static const prog_char str_sine[] PROGMEM = "sine";
 static const prog_char str_1oct_arp[] PROGMEM = "1oct arp";
 static const prog_char str_2oct_arp[] PROGMEM = "2oct arp";
 static const prog_char str_chrm_scl[] PROGMEM = "chrm.scl";
+static const prog_char str_cm3_note[] PROGMEM = "c-3 note";
+static const prog_char str_cm1_note[] PROGMEM = "c-1 note";
 static const prog_char str_c1_note[] PROGMEM = "c1 note";
 static const prog_char str_c3_note[] PROGMEM = "c3 note";
 static const prog_char str_trigger[] PROGMEM = "trigger";
@@ -138,6 +140,8 @@ PROGMEM const prog_char* const string_table[] = {
   str_1oct_arp,
   str_2oct_arp,
   str_chrm_scl,
+  str_cm3_note,
+  str_cm1_note,
   str_c1_note,
   str_c3_note,
   str_off,

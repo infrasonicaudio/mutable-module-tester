@@ -73,6 +73,8 @@ enum CvMode {
   CV_MODE_1_OCTAVE_ARP,
   CV_MODE_2_OCTAVE_ARP,
   CV_MODE_CHROMATIC_SCALE_ARP,
+  CV_MODE_CM3_NOTE,
+  CV_MODE_CM1_NOTE,
   CV_MODE_C1_NOTE,
   CV_MODE_C3_NOTE
 };
@@ -148,17 +150,17 @@ enum SignalGeneratorParameter {
   SG_PRM_CLOCK_RESOLUTION,
   SG_PRM_CLOCK_PULSE_DURATION,
   SG_PRM_CLOCK_MIDI_MODE,
-  
+
   SG_PRM_GATE_PERIOD,
   SG_PRM_GATE_PULSE_DURATION,
   SG_PRM_GATE_MIDI_MODE,
   SG_PRM_GATE_PADDING,
-  
+
   SG_PRM_CV_MODE,
   SG_PRM_CV_PERIOD,
   SG_PRM_CV_RANGE,
   SG_PRM_CV_MIDI_MODE,
-  
+
   SG_PRM_AUDIO_MODE,
   SG_PRM_AUDIO_FREQUENCY,
   SG_PRM_AUDIO_ENVELOPE_MODE,
@@ -195,27 +197,27 @@ struct SignalGeneratorSettings {
 struct SignalGeneratorState {
   uint32_t clock_phase;
   uint32_t clock_phase_increment;
-  
+
   uint32_t gate_phase;
   uint32_t gate_phase_increment;
-  
+
   uint32_t cv_phase;
   uint32_t cv_phase_increment;
-  
+
   uint32_t audio_phase;
   uint32_t audio_phase_increment;
   uint16_t audio_midi_note;
-  
+
   uint16_t clock_pulse;
   uint16_t clock_pulse_duration;
   uint16_t clock_pulse_ratio;
-  
+
   uint16_t gate_pulse;
   uint16_t gate_pulse_duration;
   uint16_t gate_pulse_ratio;
-  
+
   uint16_t audio_envelope_phase;
-  
+
   uint16_t clock_prescaler;
   uint8_t trigger_count;
   uint8_t gate_state;
@@ -228,18 +230,18 @@ class SignalGenerator {
 
   SignalGenerator() { }
   ~SignalGenerator() { }
-  
+
   static void Init();
   static void Render();
-  
+
   static uint16_t ReadAudioSample() {
     return audio_buffer_.ImmediateRead();
   }
-  
+
   static uint16_t ReadCvSample() {
     return cv_buffer_.ImmediateRead();
   }
-  
+
   static const SignalGeneratorSettings& data() { return data_; }
   static SignalGeneratorSettings* mutable_data() { return &data_; }
 
@@ -277,27 +279,27 @@ class SignalGenerator {
   static void RenderClock();
   static void RenderGate();
   static void RenderCv();
-  
+
   static void RenderAudioBandLimited();
   static void RenderAudioSine();
   static void RenderAudioNoise();
-  
+
   static uint16_t cv_samples_[kCvBlockSize];
   static uint16_t last_note_value_;
-  
+
   static SignalGeneratorSettings data_;
   static SignalGeneratorState state_;
-  
+
   static avrlib::RingBuffer<AudioBufferSpecs> audio_buffer_;
   static avrlib::RingBuffer<CvBufferSpecs> cv_buffer_;
-  
+
   static uint16_t pitch_bend_;
   static uint8_t modulation_;
-  
+
   static const AudioRenderFn fn_table_[];
-  
+
   static NoteStack<10> note_stack_;
-  
+
   DISALLOW_COPY_AND_ASSIGN(SignalGenerator);
 };
 
